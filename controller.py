@@ -1,11 +1,13 @@
 import sounddevice as sd
-from media_controls import toggle_play
+import win32api
+from threading import Event
 
-SAMPLE_RATE = 1000 # Sample rate for our input stream
-BLOCK_SIZE = 100 # Number of samples before we trigger a processing callback
-PRESS_SECONDS = 0.2 # Number of seconds button should be held to register press
-PRESS_SAMPLE_THRESHOLD = 0.9 # Signal amplitude to register as a button press
 
+SAMPLE_RATE = 10000  # Sample rate for our input stream
+BLOCK_SIZE = 100  # Number of samples before we trigger a processing callback
+PRESS_SECONDS = 0.1  # Number of seconds button should be held to register press
+PRESS_SAMPLE_THRESHOLD = 0.7  # Signal amplitude to register as a button press
+VK_MEDIA_PLAY_PAUSE = 0xB3
 BLOCKS_TO_PRESS = (SAMPLE_RATE/BLOCK_SIZE)*PRESS_SECONDS
 
 
@@ -34,3 +36,11 @@ class HeadsetButtonController:
 
         self.is_held = True
         self.times_pressed = 0
+
+
+def toggle_play():
+    win32api.keybd_event(VK_MEDIA_PLAY_PAUSE, 0, 0, 0)
+
+
+controller = HeadsetButtonController()
+Event().wait()
